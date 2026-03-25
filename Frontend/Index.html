@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mechanic Booking</title>
+  </head>
+  <body>
+    <h1>Mechanic Booking App</h1>
+
+    <h2>Login</h2>
+    <input id="email" placeholder="Email" />
+    <input id="password" placeholder="Password" type="password" />
+    <button onclick="login()">Login</button>
+
+    <h2>Book Appointment</h2>
+    <input id="name" placeholder="Name" />
+    <input id="phone" placeholder="Phone" />
+    <input id="date" type="date" />
+    <input id="time" placeholder="Time (e.g. 10:00)" />
+    <input id="service" placeholder="Service" />
+    <button onclick="book()">Book</button>
+
+    <script>
+      const BACKEND_URL = "https://your-app.onrender.com/api";
+
+      let user = null;
+
+      async function login() {
+        const res = await fetch(BACKEND_URL + "/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value
+          })
+        });
+
+        const data = await res.json();
+        if (data.user) {
+          user = data.user;
+          alert("Logged in!");
+        } else {
+          alert("Login failed");
+        }
+      }
+
+      async function book() {
+        if (!user) return alert("Login first");
+
+        await fetch(BACKEND_URL + "/book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: document.getElementById("name").value,
+            phone: document.getElementById("phone").value,
+            date: document.getElementById("date").value,
+            time: document.getElementById("time").value,
+            service: document.getElementById("service").value,
+            email: user.email
+          })
+        });
+
+        alert("Booked! SMS sent.");
+      }
+    </script>
+  </body>
+</html>
